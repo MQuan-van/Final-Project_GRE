@@ -10,7 +10,6 @@ const fallbackScooters = [
     _id: "nvx-155-vva",
     name: "DTH SCOOTER TEAM",
     version: "NVX 155 VVA",
-    description: "Cộng đồng NVX dành cho anh em thích xe tay ga thể thao, bản độ gọn gàng, ảnh đẹp và những chuyến đi có chất riêng.",
     thumbnail: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1400&q=85",
     images: [
       {
