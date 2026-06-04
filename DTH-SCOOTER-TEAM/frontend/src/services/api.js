@@ -9,7 +9,7 @@ const fallbackScooters = [
   {
     _id: "nvx-155-vva",
     name: "DTH SCOOTER TEAM",
-    version: "NVX 155 VVA",
+    version: "NVX 155 VVA V1",
     thumbnail: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1400&q=85",
     images: [
       {
@@ -32,7 +32,7 @@ const fallbackScooters = [
   {
     _id: "nvx-monster-energy",
     name: "DTH SCOOTER TEAM",
-    version: "Monster Energy",
+    version: "NVX 155 VVA V2",
     description: "Một layout showcase cho các bản NVX tem đấu, dàn áo nổi bật và gallery ảnh theo phong cách đen, sâu, giàu tương phản.",
     thumbnail: "https://images.unsplash.com/photo-1609630875171-b1321377ee65?auto=format&fit=crop&w=1400&q=85",
     images: [
@@ -51,7 +51,7 @@ const fallbackScooters = [
   {
     _id: "nvx-custom",
     name: "DTH SCOOTER TEAM",
-    version: "Custom Build",
+    version: "NVX 155 VVA V3",
     description: "Không gian để trưng bày các bản độ mâm, phuộc, pô, dàn áo và những nâng cấp thẩm mỹ của thành viên trong team.",
     thumbnail: "https://images.unsplash.com/photo-1558980664-10e7170b5df9?auto=format&fit=crop&w=1400&q=85",
     images: [

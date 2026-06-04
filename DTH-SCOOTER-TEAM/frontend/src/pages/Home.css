@@ -54,7 +54,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1540px;
+  max-width: 1700px;
   padding: 32px 24px;
   min-height: 100vh;
 }
@@ -98,13 +98,15 @@
 
 @media (min-width: 1024px) {
   .home-grid {
-    grid-template-columns: 0.92fr 1.08fr;
-    gap: 80px;
+    grid-template-columns: 1fr 1fr;
+    gap: 120px;
   }
 }
 
 .home-left-content {
-  max-width: 48rem;
+  max-width: 80rem;
+    transform: translateX(-850px);
+
 }
 
 .home-title-wrapper {
@@ -115,10 +117,12 @@
 }
 
 .home-title {
-  font-size: 12rem;
+  font-size: 10.5rem;
   font-weight: 900;
   line-height: 0.86;
-  letter-spacing: normal;
+  letter-spacing: normal; 
+    white-space: nowrap;
+
 
 }
 
@@ -143,9 +147,10 @@
 }
 
 .home-tags {
+  width: 500%;
+  height: 90px;
   margin-top: 40px;
   display: flex;
-  flex-wrap: wrap;
   gap: 12px;
 }
 
@@ -153,10 +158,13 @@
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 8px 20px;
-  font-size: 0.875rem;
+  font-size: 2rem;
   font-weight: 900;
   letter-spacing: 0.14em;
   color: rgba(255, 255, 255, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .home-buttons {
@@ -168,10 +176,10 @@
 }
 
 .home-btn-gallery {
-  border-radius: 9999px;
+  border-radius: 20px;
   background-color: white;
   padding: 12px 28px;
-  font-size: 0.875rem;
+  font-size: 1.5rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -180,22 +188,27 @@
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width: 400px;
+  height: 100px;
+    display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .home-btn-gallery:hover {
-  background-color: #4cc9f0;
+  background-color: #08b642;
 }
 
 .home-indicators {
   display: flex;
-  gap: 10px;
+  gap: 30px;
 }
 .home-indicator {
-  width: 60px;
-  height: 50px;
+  width: 100px;
+  height: 100px;
 
   border: none;
-  border-radius: 900px;
+  border-radius: 20px;
 
   background: rgba(255,255,255,.08);
 
@@ -233,73 +246,18 @@
 .home-right-content {
   position: relative;
   min-height: 700px;
+    transform: translateX(-500px);
+
+
 }
 
 @media (min-width: 1024px) {
   .home-right-content {
     min-height: 620px;
+    
+
   }
 }
-
-/* .home-secondary-image-1 {
-  position: absolute;
-  left: -5%;
-  top: 6%;
-  width: 40%;
-  display: none;
-  overflow: hidden;
-  border-radius: 4px;
-  background-color: rgba(255, 255, 255, 0.03);
-  opacity: 0.45;
-  box-shadow: 0 0 80px rgba(76, 201, 240, 0.18), 0 0 110px rgba(239, 35, 60, 0.16);
-}
-
-@media (min-width: 640px) {
-  .home-secondary-image-1 {
-    display: block;
-  }
-}
-
-.home-secondary-image-1 img {
-  aspect-ratio: 4 / 3;
-  width: 100%;
-  object-fit: cover;
-  filter: grayscale(100%);
-}
-
-.home-secondary-image-2 {
-  position: absolute;
-  bottom: 12%;
-  left: 9%;
-  width: 31%;
-  display: none;
-  overflow: hidden;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  background-color: rgba(255, 255, 255, 0.04);
-  opacity: 0.6;
-  box-shadow: 0 0 80px rgba(76, 201, 240, 0.18), 0 0 110px rgba(239, 35, 60, 0.16);
-} */
-
-/* @media (min-width: 768px) {
-  .home-secondary-image-2 {
-    display: block;
-  }
-}
-
-.home-secondary-image-2 img {
-  aspect-ratio: 4 / 5;
-  width: 100%;
-  object-fit: cover;
-}
-
-.home-secondary-image-2::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(239, 35, 60, 0.3), transparent);
-} */
-
 .home-featured-link {
   position: absolute;
   right: 0;
@@ -424,6 +382,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  border-radius: 12px;
 }
 .home-thumb {
   width: 120px;
@@ -466,11 +425,12 @@
    position: relative;
   text-decoration: none;
     perspective: 1200px;
-
+  cursor: pointer;
+  
 }
 .home-main-image img {
-  width: 900px;
-  height: 1300px;
+  width: 1000px;
+  height: 1500px;
 
   object-fit: cover;
 
@@ -485,16 +445,13 @@
   transform: scale(.95);
 }
 .home-scooter-title {
-  margin-top: 18px;
-
-  text-align: center;
-
-  font-size: 1.5rem;
-  font-weight: 700;
-
+  font-size: 42px;
+  font-weight: 900;
   color: white;
+  margin-top: 20px;
+  letter-spacing: 2px;
 
-  letter-spacing: 1px;
+  will-change: transform;
 }
 .home-image-wrapper {
   display: flex;

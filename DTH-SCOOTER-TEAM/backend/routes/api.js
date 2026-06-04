@@ -6,20 +6,20 @@ const router = express.Router();
 
 const mockScooters = [
   {
-    name: "Yamaha NVX",
-    version: "155 VVA",
+    name: "DTH Scooter Team",
+    version: "NVX 155 VVA V1",
     description: "Dòng xe tay ga thể thao được cộng đồng DTH Scooter Team yêu thích nhờ thiết kế mạnh mẽ, động cơ 155 VVA và khả năng tùy biến cao.",
     thumbnail: "https://images.unsplash.com/photo-1558981806-ec527fa84c39"
   },
   {
-    name: "Yamaha NVX",
-    version: "155 VVA Monster Energy",
+    name: "DTH Scooter Team",
+    version: "NVX 155 VVA V2",
     description: "Phiên bản tem Monster Energy nổi bật, phù hợp phong cách touring, street style và các bản độ cá tính trong cộng đồng NVX.",
     thumbnail: "https://images.unsplash.com/photo-1609630875171-b1321377ee65"
   },
   {
-    name: "Yamaha NVX",
-    version: "155 VVA Custom",
+    name: "DTH Scooter Team",
+    version: "NVX 155 VVA V3",
     description: "Bản custom tập trung vào dàn áo, mâm, phuộc, pô và các phụ kiện nâng cấp thẩm mỹ cho anh em chơi xe.",
     thumbnail: "https://images.unsplash.com/photo-1558980664-10e7170b5df9"
   }

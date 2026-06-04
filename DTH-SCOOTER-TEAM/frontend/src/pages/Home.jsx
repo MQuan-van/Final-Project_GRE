@@ -1,18 +1,30 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState, useRef } from "react";
+import { Link, useNavigate  } from "react-router-dom";
 import { getScooters } from "../services/api.js";
 import { scooterImages } from "../constants/images.js";
 import "./Home.css";
+import { motion } from "framer-motion";
 
 function Home() {
   const [scooters, setScooters] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isScrolling, setIsScrolling] = useState(false);
+  const detailRefs = useRef([]);
+  const navigate = useNavigate();
   const [rotate, setRotate] = useState({
     x: 0,
     y: 0,
   });
+  const scrollToCurrentDetail  = () => {
+    detailRefs.current[activeIndex]?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+  const handleViewDetails = () => {
+    navigate(`/gallery/${activeScooter._id}`);
+  };
 
   useEffect(() => {
     const loadScooters = async () => {
@@ -45,7 +57,7 @@ function Home() {
 
       setTimeout(() => {
         setIsScrolling(false);
-      }, 500);
+      }, 50);
     };
     window.addEventListener("wheel", handleWheel);
 
@@ -60,13 +72,13 @@ function Home() {
 
     setIsChanging(true);
 
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       setActiveIndex(newIndex);
+
       setTimeout(() => {
         setIsChanging(false);
-      }, 50);
-
-    }, 150);
+      }, 600); // đủ thời gian animation chạy
+    });
   };
 
   const activeScooter = useMemo(() => {
@@ -80,11 +92,11 @@ function Home() {
     ? scooterImages.scooter2
     : scooterImages.scooter3;
 
-  const scooterTitles = [
-    "NVX 155 VVA V1",
-    "NVX 155 VVA V2",
-    "NVX 155 VVA V3",
-  ];
+  // const scooterTitles = [
+  //   "NVX 155 VVA V1",
+  //   "NVX 155 VVA V2",
+  //   "NVX 155 VVA V3",
+  // ];
 
   if (loading) {
     return (
@@ -100,8 +112,8 @@ function Home() {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    const rotateY = ((x / rect.width) - 0.5) * 5;
-    const rotateX = -((y / rect.height) - 0.5) * 3;
+    const rotateY = ((x / rect.width) - 0.5) * 10;
+    const rotateX = -((y / rect.height) - 0) ;
 
     setRotate({
       x: rotateX,
@@ -114,18 +126,7 @@ function Home() {
       y: 0,
     });
   };
-
-  // const prevImage =
-  //   scooterImages[
-  //     `scooter${Math.max(1, activeIndex)}`
-  //   ];
-
-  // const nextImage =
-  //   scooterImages[
-  //     `scooter${Math.min(3, activeIndex + 2)}`
-  //   ];
-
-  return (
+console.log(activeScooter._id);  return (
     <main className="home-main">
       <div className="home-gradient-overlay" />
       <div className="home-linear-overlay" />
@@ -135,7 +136,7 @@ function Home() {
           <div className="home-left-content">
             <div className="home-title-wrapper">
               <h1 className="home-title">
-                DTH <br className="sm:hidden" /> Scooter Team
+                DTH Scooter Team
               </h1>
             </div>
 
@@ -157,12 +158,13 @@ function Home() {
               >
                 Explore Gallery
               </Link>
-                            <div className="home-indicators">
-                {scooters.map((scooter, index) => (
+              <div className="home-indicators">
+                 {scooters.map((scooter, index) => (
                   <button
                     key={scooter._id}
                     type="button"
-                    onClick={() => changeScooter(index)}                    className={`home-indicator ${
+                    onClick={() => changeScooter(index)}
+                    className={`home-indicator ${
                       index === activeIndex ? "active" : ""
                     }`}
                   >
@@ -172,7 +174,6 @@ function Home() {
               </div>
             </div>
           </div>
-
           <div className="home-right-content">
             {activeScooter && (
               <>
@@ -192,19 +193,21 @@ function Home() {
                       </div>
                     ))}
                   </div>
-                  <div 
-                    className="home-image-wrapper"
+                  {/* <div className="home-image-wrapper"
                     onMouseMove={handleMouseMove}
                     onMouseLeave={handleMouseLeave}>
-                    <Link
-                      to={`/gallery/${activeScooter._id}`}
-                      className="home-main-image"
-                    >
-                      <img
+                      <div className="home-main-image"
+                        onClick={handleViewDetails} >
+                        <motion.img
+                              layoutId={`image-${activeScooter._id}`}
+                              transition={{
+                                duration: 0.9,
+                                ease: [0.22, 1, 0.36, 1]
+                              }}
                         className={isChanging ? "changing" : ""}
-                          src={currentImage?.thumbnail}
-                          alt={activeScooter?.version}
-                          style={{
+                        src={currentImage?.thumbnail}
+                        alt={activeScooter?.version}
+                                                style={{
                             transform: `
                               perspective(1200px)
                               rotateX(${rotate.x}deg)
@@ -216,11 +219,62 @@ function Home() {
                       <div className="home-hover-details">
                         View Details →
                       </div>
-                    </Link>
+                    </div>
+                    <motion.h2
+                      layoutId={`title-${activeScooter._id}`}
+                      transition={{
+                        duration: 0.9,
+                        ease: [0.22, 1, 0.36, 1]
+                      }}
+                      className="home-scooter-title"
+                    >
+                      {activeScooter.version}
+                    </motion.h2>
+                  </div> */}
+                  <div
+                    className="home-image-wrapper"
+                    onMouseMove={handleMouseMove}
+                    onMouseLeave={handleMouseLeave}
+                  >
 
-                    <h2 className="home-scooter-title">
-                      {scooterTitles[activeIndex]}
-                    </h2>
+                    {/* IMAGE */}
+                    <div className="home-main-image" onClick={handleViewDetails}>
+                      <motion.img
+                        layoutId={`image-${activeScooter._id}`}
+                        transition={{
+                          duration: 0.9,
+                          ease: [0.22, 1, 0.36, 1],
+                        }}
+                        className={isChanging ? "changing" : ""}
+                        src={currentImage?.thumbnail}
+                        alt={activeScooter?.version}
+                        style={{
+                          transform: `
+                            perspective(1200px)
+                            rotateX(${rotate.x}deg)
+                            rotateY(${rotate.y}deg)
+                            scale(1)
+                          `,
+                        }}
+                      />
+
+                      <div className="home-hover-details">
+                        View Details →
+                      </div>
+                    </div>
+
+                    {/* TITLE - QUAN TRỌNG NHẤT */}
+                    <motion.h2
+                      layoutId={`title-${activeScooter._id}`}
+                      transition={{
+                        duration: 0.9,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                      className="home-scooter-title"
+                    >
+                      {activeScooter.version}
+                    </motion.h2>
+
                   </div>
                 </div>
               </>
@@ -231,5 +285,4 @@ function Home() {
     </main>
   );
 }
-
 export default Home;

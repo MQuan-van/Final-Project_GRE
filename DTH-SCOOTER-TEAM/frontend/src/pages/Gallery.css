@@ -83,11 +83,11 @@
 }
 
 .gallery-version {
-  font-size: 0.875rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.24em;
-  color: rgba(255, 255, 255, 0.35);
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 10px;
+
 }
 
 .gallery-title-section {
@@ -96,9 +96,9 @@
 
 .gallery-title {
   max-width: 80rem;
-  font-size: clamp(54.4px, 9vw, 128px);
+  font-size: clamp(90px, 9vw, 180px);
   font-weight: 900;
-  line-height: 0.9;
+  line-height: .9;
 }
 
 .gallery-description {
@@ -171,4 +171,16 @@
 .gallery-card-title {
   font-size: 1.125rem;
   font-weight: 900;
+}
+.gallery-hero-image {
+  width: 100%;
+  height: 600px;
+
+  margin-top: 40px;
+
+  object-fit: cover;
+
+  border-radius: 24px;
+
+  display: block;
 }
