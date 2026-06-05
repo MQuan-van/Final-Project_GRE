@@ -131,18 +131,6 @@ console.log(activeScooter._id);  return (
                 DTH Scooter Team
               </h1>
             </div>
-
-            <div className="home-tags">
-              {["FANPAGE", "TIKTOK"].map((tag) => (
-                <span
-                  key={tag}         
-                  className="home-tag"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-
             <div className="home-buttons">
               <Link
                 to={`/gallery/${activeScooter._id}`}

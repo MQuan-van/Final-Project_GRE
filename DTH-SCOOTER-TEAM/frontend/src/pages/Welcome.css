@@ -48,20 +48,18 @@
 
 .wel-nav {
   position: relative;
+
   height: 90px;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
 
-  background: rgba(0, 0, 0, 0.5);
+  align-items: center;
+
+  background: rgba(0,0,0,0.5);
   backdrop-filter: blur(14px);
 
-  color: #fff;
-  font-weight: 600;
-  font-size: 30px;
-
+  color: white;
 }
 
 /* =========================
@@ -79,7 +77,29 @@
   transition: 0.3s ease;
   letter-spacing: 0.5px;
 }
-
+.nav-left {
+  justify-self: start;
+  margin-left: 80px;
+  gap: 90px;
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: 2px;  
+}
+.nav-center {
+  justify-self: center;
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  display: flex;
+  gap: 50px;
+}
+.nav-right {
+  justify-self: end;
+  margin-right: 80px;
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
 /* base hover effect */
 .nav-item:hover {
   transform: translateY(-2px);
@@ -87,7 +107,7 @@
 .nav-item:not(:last-child)::after {
   content: "/";
   position: absolute;
-  right: -45px;   /* chỉnh khoảng cách */
+  right: -30px;   /* chỉnh khoảng cách */
   top: 50%;
   transform: translateY(-50%);
   color: rgba(255,255,255,0.3);
@@ -104,7 +124,7 @@
   left: 0;
   top: 0;
 
-  color: white;
+  color: rgb(255, 255, 255);
 
   width: 0%;
   overflow: hidden;
@@ -120,7 +140,6 @@
 /* =========================
    DIVIDER LINE
 ========================= */
-
 .wel-nav::before {
   content: "";
   position: absolute;
@@ -129,35 +148,9 @@
   left: 50%;
   transform: translateX(-50%);
 
-  width: 85%;
+  width: 85%;      /* chừa 2 bên */
   height: 1px;
 
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    rgba(255, 255, 255, 0.6),
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
-
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
-  opacity: 0.8;
-}
-
-/* glow under line */
-.wel-nav::after {
-  content: "";
-  position: absolute;
-
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-
-  width: 60%;
-  height: 6px;
-
-  background: rgba(255, 255, 255, 0.08);
-  filter: blur(8px);
-  opacity: 0.6;
+  background: white;
+  opacity: 0.7;
 }
