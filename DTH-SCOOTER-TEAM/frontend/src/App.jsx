@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 
 import Home from "./pages/Home";
+import Welcome from "./pages/Welcome";
 import Gallery from "./pages/Gallery";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           location={location}
           key={location.pathname}
         >
+            <Route path="/welcome" element={<Welcome />} />
           <Route path="/" element={<Home />} />
           <Route path="/gallery/:id" element={<Gallery />} />
         </Routes>

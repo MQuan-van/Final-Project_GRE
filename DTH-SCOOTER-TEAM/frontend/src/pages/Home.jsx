@@ -3,19 +3,19 @@ import { Link, useNavigate  } from "react-router-dom";
 import { getScooters } from "../services/api.js";
 import { scooterImages } from "../constants/images.js";
 import "./Home.css";
-import { motion } from "framer-motion";
+    // import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 
 function Home() {
   const [scooters, setScooters] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isHover, setIsHover] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
   const detailRefs = useRef([]);
   const navigate = useNavigate();
-  const [rotate, setRotate] = useState({
-    x: 0,
-    y: 0,
-  });
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
   const scrollToCurrentDetail  = () => {
     detailRefs.current[activeIndex]?.scrollIntoView({
       behavior: "smooth",
@@ -57,7 +57,7 @@ function Home() {
 
       setTimeout(() => {
         setIsScrolling(false);
-      }, 50);
+      }, 150);
     };
     window.addEventListener("wheel", handleWheel);
 
@@ -112,19 +112,11 @@ function Home() {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    const rotateY = ((x / rect.width) - 0.5) * 10;
-    const rotateX = -((y / rect.height) - 0) ;
+    const rotateYValue = ((x / rect.width) - 0.5) * 12;
+    const rotateXValue = -((y / rect.height) - 0.5) * 12;
 
-    setRotate({
-      x: rotateX,
-      y: rotateY,
-    });
-  };
-  const handleMouseLeave = () => {
-    setRotate({
-      x: 0,
-      y: 0,
-    });
+    rotateX.set(rotateXValue);
+    rotateY.set(rotateYValue);
   };
 console.log(activeScooter._id);  return (
     <main className="home-main">
@@ -158,123 +150,52 @@ console.log(activeScooter._id);  return (
               >
                 Explore Gallery
               </Link>
-              <div className="home-indicators">
-                 {scooters.map((scooter, index) => (
-                  <button
-                    key={scooter._id}
-                    type="button"
-                    onClick={() => changeScooter(index)}
-                    className={`home-indicator ${
-                      index === activeIndex ? "active" : ""
-                    }`}
-                  >
-                    V{index + 1}
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
           <div className="home-right-content">
             {activeScooter && (
               <>
                 <div className="home-showcase">
-                  <div className="home-thumbnails">
-                    {[1, 2, 3].map((num, index) => (
-                      <div
-                        key={num}
-                        className={`home-thumb ${
-                          activeIndex === index ? "active" : ""
+                  <div className="home-indicators-vertical">
+                    {scooters.map((scooter, index) => (
+                      <button
+                        key={scooter._id}
+                        type="button"
+                        onClick={() => changeScooter(index)}
+                        className={`home-indicator ${
+                          index === activeIndex ? "active" : ""
                         }`}
-                          onClick={() => changeScooter(index)}                      >
-                        <img
-                          src={scooterImages[`scooter${num}`]?.thumbnail}
-                          alt=""
-                        />
-                      </div>
+                      >
+                        {`NVX VVA 155 V${index + 1}`}
+                      </button>
                     ))}
                   </div>
-                  {/* <div className="home-image-wrapper"
-                    onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}>
-                      <div className="home-main-image"
-                        onClick={handleViewDetails} >
-                        <motion.img
-                              layoutId={`image-${activeScooter._id}`}
-                              transition={{
-                                duration: 0.9,
-                                ease: [0.22, 1, 0.36, 1]
-                              }}
-                        className={isChanging ? "changing" : ""}
-                        src={currentImage?.thumbnail}
-                        alt={activeScooter?.version}
-                                                style={{
-                            transform: `
-                              perspective(1200px)
-                              rotateX(${rotate.x}deg)
-                              rotateY(${rotate.y}deg)
-                              scale(1)
-                            `,
-                          }}
-                      />
-                      <div className="home-hover-details">
-                        View Details →
-                      </div>
-                    </div>
-                    <motion.h2
-                      layoutId={`title-${activeScooter._id}`}
-                      transition={{
-                        duration: 0.9,
-                        ease: [0.22, 1, 0.36, 1]
-                      }}
-                      className="home-scooter-title"
-                    >
-                      {activeScooter.version}
-                    </motion.h2>
-                  </div> */}
                   <div
                     className="home-image-wrapper"
-                    onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}
+                      onMouseEnter={() => setIsHover(true)}
+                      onMouseMove={handleMouseMove}
                   >
-
                     {/* IMAGE */}
-                    <div className="home-main-image" onClick={handleViewDetails}>
+                    <div className="home-main-image">
                       <motion.img
                         layoutId={`image-${activeScooter._id}`}
-                        transition={{
-                          duration: 0.9,
-                          ease: [0.22, 1, 0.36, 1],
-                        }}
-                        className={isChanging ? "changing" : ""}
                         src={currentImage?.thumbnail}
                         alt={activeScooter?.version}
+                        className={isChanging ? "changing" : ""}
+
                         style={{
-                          transform: `
-                            perspective(1200px)
-                            rotateX(${rotate.x}deg)
-                            rotateY(${rotate.y}deg)
-                            scale(1)
-                          `,
+                          rotateX,
+                          rotateY,
+                          transformPerspective: 1200,
+                          transformStyle: "preserve-3d",
+                        }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 120,
+                          damping: 18,
                         }}
                       />
-
-                      <div className="home-hover-details">
-                        View Details →
-                      </div>
                     </div>
-
-                    {/* TITLE - QUAN TRỌNG NHẤT */}
-                    <motion.h2
-                      layoutId={`title-${activeScooter._id}`}
-                      transition={{
-                        duration: 0.9,
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
-                      className="home-scooter-title"
-                    >
-                      {activeScooter.version}
-                    </motion.h2>
-
                   </div>
                 </div>
               </>

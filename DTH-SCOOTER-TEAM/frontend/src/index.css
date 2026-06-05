@@ -16,6 +16,8 @@
 
 html {
   background: var(--color-asphalt);
+    overflow: hidden;
+
 }
 
 body {
@@ -24,6 +26,8 @@ body {
   background: var(--color-asphalt);
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   color: white;
+    overflow: hidden;
+
 }
 
 button,

@@ -1,0 +1,163 @@
+/* =========================
+   LAYOUT
+========================= */
+
+.welcome-main {
+  position: relative;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #000;
+}
+
+/* =========================
+   BODY (BACKGROUND)
+========================= */
+
+.welcome-body {
+  flex: 1;
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+/* BACKGROUND LOGO */
+.welcome-body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background-image: url("/images/logodth.jpeg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 45%;
+
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* =========================
+   FOOTER NAV
+========================= */
+
+.wel-nav {
+  position: relative;
+  height: 90px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 80px;
+
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(14px);
+
+  color: #fff;
+  font-weight: 600;
+  font-size: 30px;
+
+}
+
+/* =========================
+   NAV ITEM (CLEAN)
+========================= */
+
+.nav-item {
+  position: relative;
+  display: inline-block;
+
+  cursor: pointer;
+
+  color: rgba(255,255,255,0.4);
+
+  transition: 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+/* base hover effect */
+.nav-item:hover {
+  transform: translateY(-2px);
+}
+.nav-item:not(:last-child)::after {
+  content: "/";
+  position: absolute;
+  right: -45px;   /* chỉnh khoảng cách */
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255,255,255,0.3);
+  font-weight: 300;
+}
+
+/* =========================
+   TEXT REVEAL EFFECT
+========================= */
+
+.nav-item::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  color: white;
+
+  width: 0%;
+  overflow: hidden;
+  white-space: nowrap;
+
+  transition: width 0.45s ease;
+}
+
+.nav-item:hover::before {
+  width: 100%;
+}
+
+/* =========================
+   DIVIDER LINE
+========================= */
+
+.wel-nav::before {
+  content: "";
+  position: absolute;
+
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 85%;
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+  opacity: 0.8;
+}
+
+/* glow under line */
+.wel-nav::after {
+  content: "";
+  position: absolute;
+
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 60%;
+  height: 6px;
+
+  background: rgba(255, 255, 255, 0.08);
+  filter: blur(8px);
+  opacity: 0.6;
+}
