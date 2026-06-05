@@ -1,102 +1,103 @@
-import { useEffect, useMemo, useState, useRef } from "react";
-import { Link, useNavigate  } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { gsap } from "gsap";
 import { getScooters } from "../services/api.js";
 import { scooterImages } from "../constants/images.js";
 import "./Home.css";
-    // import { motion } from "framer-motion";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { initLenis } from "../utils/lenis.js";
+
+
+const FOUNDER_IMG = "/images/founder.jpg";
+
+const VERSIONS = [
+  { key: "scooter1", label: "V1", version: "NVX 155 VVA V1" },
+  { key: "scooter2", label: "V2", version: "NVX 155 VVA V2" },
+  { key: "scooter3", label: "V3", version: "NVX 155 VVA V3" },
+];
+
+const TOTAL_STEPS = 4; // 0=hero, 1=V1, 2=V2, 3=V3
 
 function Home() {
   const [scooters, setScooters] = useState([]);
-  const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [isHover, setIsHover] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
-  const detailRefs = useRef([]);
-  const navigate = useNavigate();
-  const rotateX = useMotionValue(0);
-  const rotateY = useMotionValue(0);
-  const scrollToCurrentDetail  = () => {
-    detailRefs.current[activeIndex]?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  };
-  const handleViewDetails = () => {
-    navigate(`/gallery/${activeScooter._id}`);
-  };
+  const [step, setStep] = useState(0);
+
+  const heroRef = useRef(null);
+  const heroLeftRef = useRef(null);
+  const heroImgRef = useRef(null);
+  const scooterSectionRef = useRef(null);
+  const headerRef = useRef(null);
+  const blobsRef = useRef([]);
+  const isAnimating = useRef(false);
 
   useEffect(() => {
-    const loadScooters = async () => {
-      const data = await getScooters();
+    getScooters().then((data) => {
       setScooters(data);
       setLoading(false);
-    };
-
-    loadScooters();
+    });
   }, []);
 
-  // xử lý để lấy scooter đang active dựa trên activeIndex, nếu không có thì lấy scooter đầu tiên làm mặc định
+  // Entrance animation
   useEffect(() => {
-    const handleWheel = (e) => {
-      if (scooters.length === 0) return;
+    if (loading) return;
 
-      if (isScrolling) return;
-
-      setIsScrolling(true);
-
-      if (e.deltaY > 0) {
-        changeScooter(
-          Math.min(activeIndex + 1, scooters.length - 1)
-        );
-      } else {
-        changeScooter(
-          Math.max(activeIndex - 1, 0)
-        );
-      }
-
-      setTimeout(() => {
-        setIsScrolling(false);
-      }, 150);
-    };
-    window.addEventListener("wheel", handleWheel);
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-    };
-  }, [scooters.length, activeIndex, isScrolling]);
-
-  const [isChanging, setIsChanging] = useState(false);  
-  const changeScooter = (newIndex) => {
-    if (newIndex === activeIndex) return;
-
-    setIsChanging(true);
-
-    requestAnimationFrame(() => {
-      setActiveIndex(newIndex);
-
-      setTimeout(() => {
-        setIsChanging(false);
-      }, 600); // đủ thời gian animation chạy
+    gsap.to(blobsRef.current, {
+      opacity: 1, duration: 2, stagger: 0.3, ease: "power2.out",
     });
-  };
+    gsap.to(headerRef.current, {
+      opacity: 1, y: 0, duration: 0.7, ease: "power3.out", delay: 0.1,
+    });
+    const leftChildren = heroLeftRef.current?.querySelectorAll(".anim-child");
+    gsap.to(leftChildren, {
+      opacity: 1, y: 0, duration: 0.8, stagger: 0.13, ease: "power4.out", delay: 0.3,
+    });
+    gsap.to(heroImgRef.current, {
+      opacity: 1, x: 0, duration: 1, ease: "power3.out", delay: 0.5,
+    });
+  }, [loading]);
 
-  const activeScooter = useMemo(() => {
-    return scooters[activeIndex] || scooters[0];  
-  }, [activeIndex, scooters]);
-  // sự kiện lăn chuột sẽ thay đổi activeIndex để chuyển ảnh
-  const currentImage =
-  activeIndex === 0
-    ? scooterImages.scooter1
-    : activeIndex === 1
-    ? scooterImages.scooter2
-    : scooterImages.scooter3;
+  // Section transition khi step thay đổi
+  useEffect(() => {
+    if (loading) return;
+    const hero = heroRef.current;
+    const scooter = scooterSectionRef.current;
 
-  // const scooterTitles = [
-  //   "NVX 155 VVA V1",
-  //   "NVX 155 VVA V2",
-  //   "NVX 155 VVA V3",
-  // ];
+    if (step === 0) {
+      gsap.to(hero, { y: "0%", duration: 0.9, ease: "power3.inOut" });
+      gsap.to(scooter, { y: "100%", duration: 0.9, ease: "power3.inOut" });
+    } else {
+      gsap.to(hero, { y: "-100%", duration: 0.9, ease: "power3.inOut" });
+      gsap.to(scooter, { y: "0%", duration: 0.9, ease: "power3.inOut" });
+    }
+
+    const timer = setTimeout(() => {
+      isAnimating.current = false;
+    }, 950);
+    return () => clearTimeout(timer);
+  }, [step, loading]);
+
+  // Scroll hijack
+  useEffect(() => {
+    if (loading) return;
+    const onWheel = (e) => {
+      if (isAnimating.current) return;
+      const dir = e.deltaY > 0 ? 1 : -1;
+      setStep((prev) => {
+        const next = prev + dir;
+        if (next < 0 || next >= TOTAL_STEPS) return prev;
+        isAnimating.current = true;
+        return next;
+      });
+    };
+    window.addEventListener("wheel", onWheel, { passive: true });
+    return () => window.removeEventListener("wheel", onWheel);
+  }, [loading]);
+  // Smooth scroll
+  useEffect(() => {
+    if (loading) return;
+    const lenis = initLenis();
+    return () => lenis.destroy();
+  }, [loading]);
 
   if (loading) {
     return (
@@ -106,92 +107,193 @@ function Home() {
     );
   }
 
-  const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+  const activeIdx = step === 0 ? 0 : step - 1;
+  const activeScooter = scooters[activeIdx] || scooters[0];
 
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const rotateYValue = ((x / rect.width) - 0.5) * 12;
-    const rotateXValue = -((y / rect.height) - 0.5) * 12;
-
-    rotateX.set(rotateXValue);
-    rotateY.set(rotateYValue);
-  };
-console.log(activeScooter._id);  return (
+  return (
     <main className="home-main">
-      <div className="home-gradient-overlay" />
-      <div className="home-linear-overlay" />
+      {/* Noise grain */}
+      <div className="home-noise" />
 
-      <section className="home-section">
-        <div className="home-grid">
-          <div className="home-left-content">
-            <div className="home-title-wrapper">
-              <h1 className="home-title">
-                DTH Scooter Team
-              </h1>
+      {/* Ambient blobs */}
+      <div className="home-ambient">
+        <div className="ambient-blob blob-1" ref={(el) => (blobsRef.current[0] = el)} />
+        <div className="ambient-blob blob-2" ref={(el) => (blobsRef.current[1] = el)} />
+      </div>
+
+      {/* Progress dots */}
+      <div className="progress-dots">
+        {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+          <button
+            key={i}
+            className={`progress-dot${step === i ? " active" : ""}`}
+            onClick={() => {
+              if (!isAnimating.current) {
+                isAnimating.current = true;
+                setStep(i);
+              }
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Header */}
+      <header className="home-header" ref={headerRef}>
+        <div className="home-header-logo">DTH Scooter Team</div>
+        <nav className="home-header-nav">
+          <div className="home-header-dot" />
+          <a href="#">Gallery</a>
+          <a href="#">Contact</a>
+        </nav>
+      </header>
+
+      {/* ══ SECTION 1 — HERO ══ */}
+      <section className="hero-section" ref={heroRef}>
+        <div className="hero-left" ref={heroLeftRef}>
+          <p className="anim-child hero-eyebrow">Founder of DTH Scooter Team</p>
+
+          <h1 className="anim-child hero-title">
+            Refined by Time<br />
+            <span className="accent">Driven</span><br />
+            by Innovation.
+          </h1>
+
+          <p className="anim-child hero-desc">
+            DTH Scooter Team là cộng đồng những anh em mê NVX độ tại HCMC.
+            Từ dàn áo, mâm, phuộc đến pô — mỗi chiếc xe là một câu chuyện riêng,
+            được tạo ra bằng đam mê thật sự trên đường phố Sài Gòn.
+          </p>
+
+          <div className="anim-child hero-tags">
+            <span className="tag">NVX 155 VVA</span>
+            <span className="tag">Street Build</span>
+            <span className="tag">DTH SCOOTER TEAM</span>
+          </div>
+
+          <div className="anim-child hero-actions">
+            <button
+              className="btn-primary"
+              onClick={() => {
+                if (!isAnimating.current) {
+                  isAnimating.current = true;
+                  setStep(1);
+                }
+              }}
+            >
+              Xem xe
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M7 2v10M3 8l4 4 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <a
+              href="https://www.facebook.com/nguyen.tien.hai.454888"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-ghost"
+            >
+              Fanpage
+            </a>
+          </div>
+        </div>
+
+        {/* Right — Founder image */}
+        <div className="hero-right" ref={heroImgRef}>
+          <div className="founder-img-wrap">
+            <img src={FOUNDER_IMG} alt="Founder DTH" className="founder-img" />
+            <div className="birthday-badge">
+              <span className="birthday-icon">🎂</span>
+              <div>
+                <div className="birthday-label">Birthday</div>
+                <div className="birthday-date">28 May</div>
+              </div>
             </div>
-            <div className="home-buttons">
-              <Link
-                to={`/gallery/${activeScooter._id}`}
-                className="home-btn-gallery"
+            <div className="frame-line frame-tl" />
+            <div className="frame-line frame-br" />
+          </div>
+        </div>
+
+        {/* Scroll hint */}
+        <div className="scroll-hint">
+          <div className="scroll-line" />
+          <span>Scroll</span>
+        </div>
+      </section>
+
+      {/* ══ SECTION 2 — SCOOTERS ══ */}
+      <section className="scooter-section" ref={scooterSectionRef}>
+        <div className="scooter-section-header">
+          <p className="section-eyebrow">The Builds</p>
+          <h2 className="section-title">NVX 155 VVA</h2>
+          <p className="section-sub">Scroll để xem từng phiên bản</p>
+        </div>
+
+        {/* Main display */}
+        <div className="scooter-main-display">
+          {VERSIONS.map((v, i) => {
+            const imgs = scooterImages[v.key];
+            return (
+              <img
+                key={v.key}
+                src={imgs?.thumbnail}
+                alt={v.version}
+                className={`scooter-main-img${i === activeIdx ? " visible" : ""}`}
+              />
+            );
+          })}
+          <div className="scooter-version-overlay">{VERSIONS[activeIdx]?.version}</div>
+        </div>
+
+        {/* Cards */}
+        <div className="scooter-cards">
+          {VERSIONS.map((v, i) => {
+            const imgs = scooterImages[v.key];
+            const sc = scooters[i];
+            return (
+              <div
+                key={v.key}
+                className={`scooter-card${i === activeIdx ? " active" : ""}`}
+                onClick={() => {
+                  if (!isAnimating.current) {
+                    isAnimating.current = true;
+                    setStep(i + 1);
+                  }
+                }}
               >
-                Explore Gallery
-              </Link>
-            </div>
-          </div>
-          <div className="home-right-content">
-            {activeScooter && (
-              <>
-                <div className="home-showcase">
-                  <div className="home-indicators-vertical">
-                    {scooters.map((scooter, index) => (
-                      <button
-                        key={scooter._id}
-                        type="button"
-                        onClick={() => changeScooter(index)}
-                        className={`home-indicator ${
-                          index === activeIndex ? "active" : ""
-                        }`}
-                      >
-                        {`NVX VVA 155 V${index + 1}`}
-                      </button>
-                    ))}
-                  </div>
-                  <div
-                    className="home-image-wrapper"
-                      onMouseEnter={() => setIsHover(true)}
-                      onMouseMove={handleMouseMove}
-                  >
-                    {/* IMAGE */}
-                    <div className="home-main-image">
-                      <motion.img
-                        layoutId={`image-${activeScooter._id}`}
-                        src={currentImage?.thumbnail}
-                        alt={activeScooter?.version}
-                        className={isChanging ? "changing" : ""}
-
-                        style={{
-                          rotateX,
-                          rotateY,
-                          transformPerspective: 1200,
-                          transformStyle: "preserve-3d",
-                        }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 120,
-                          damping: 18,
-                        }}
-                      />
-                    </div>
-                  </div>
+                <div className="scooter-card-img-wrap">
+                  <img src={imgs?.thumbnail} alt={v.version} className="scooter-card-img" />
                 </div>
-              </>
-            )}
-          </div>
+                <div className="scooter-card-info">
+                  <span className="scooter-card-label">{v.label}</span>
+                  <span className="scooter-card-version">{v.version}</span>
+                </div>
+                {sc && (
+                  <Link to={`/gallery/${sc._id}`} className="scooter-card-link">
+                    Gallery →
+                  </Link>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Dots */}
+        <div className="scooter-dots">
+          {VERSIONS.map((_, i) => (
+            <button
+              key={i}
+              className={`dot${i === activeIdx ? " active" : ""}`}
+              onClick={() => {
+                if (!isAnimating.current) {
+                  isAnimating.current = true;
+                  setStep(i + 1);
+                }
+              }}
+            />
+          ))}
         </div>
       </section>
     </main>
   );
 }
+
 export default Home;
