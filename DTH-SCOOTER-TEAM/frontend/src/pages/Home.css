@@ -3,19 +3,20 @@
 /* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body {
-  overflow: hidden;
-  height: 100%;
+/* ── QUAN TRỌNG: cho phép scroll tự nhiên ── */
+html{
+   scroll-behavior: auto;
 }
-
+body {
+min-height: 100vh;
+}
 /* ── Base ── */
 .home-main {
   background: #080808;
   color: #fff;
   font-family: 'DM Sans', sans-serif;
-  height: 100vh;
-  overflow: hidden;
-  position: relative;
+  overflow-x: clip;
+  min-height: 200vh;
 }
 
 .home-main-loading {
@@ -26,8 +27,7 @@ html, body {
   justify-content: center;
 }
 .loading-spinner {
-  width: 28px;
-  height: 28px;
+  width: 28px; height: 28px;
   border: 1.5px solid rgba(255,255,255,0.15);
   border-top-color: #fff;
   border-radius: 50%;
@@ -105,71 +105,36 @@ html, body {
   transition: color 0.25s;
 }
 .home-header-nav a:hover { color: rgba(255,255,255,0.9); }
-.home-header-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: #ff5a1e;
-}
-
-/* ── Progress dots ── */
-.progress-dots {
-  position: fixed;
-  right: 32px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 200;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.progress-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.18);
-  border: none;
-  cursor: pointer;
-  transition: all 0.35s ease;
-  padding: 0;
-}
-.progress-dot.active {
-  background: #ff5a1e;
-  height: 22px;
-  border-radius: 3px;
-}
 
 /* ══════════════════════════════
    SECTION 1 — HERO
+   position: relative + min-height 100vh
+   để scroll tự nhiên như Luke Baffait
 ══════════════════════════════ */
 .hero-section {
-  position: fixed;
-  inset: 0;
+  position: relative;
   z-index: 2;
+  min-height: 100vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: 60px;
-  padding: 110px 56px 60px;
-  max-width: 1400px;
-  width: 100%;
-  margin: 0 auto;
-  left: 50%;
-  transform: translateX(-50%) translateY(0%);
+  padding: 110px 56px 80px;
+  overflow: hidden;
 }
 
 @media (max-width: 900px) {
   .hero-section {
     grid-template-columns: 1fr;
     padding: 100px 24px 60px;
-    overflow-y: auto;
   }
   .hero-right { order: -1; }
 }
 
-/* Left */
 .hero-left {
   display: flex;
   flex-direction: column;
+  will-change: transform, opacity;
 }
 
 .anim-child {
@@ -178,9 +143,9 @@ html, body {
 }
 
 .hero-eyebrow {
-  font-size: 0.68rem;
-  font-weight: 400;
-  letter-spacing: 0.25em;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.4em;
   text-transform: uppercase;
   color: #ff5a1e;
   margin-bottom: 20px;
@@ -199,12 +164,13 @@ html, body {
 }
 
 .hero-desc {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 300;
   line-height: 1.85;
   color: rgba(255,255,255,0.4);
   max-width: 400px;
   margin-bottom: 28px;
+  letter-spacing: 0.015em;
 }
 
 .hero-tags {
@@ -249,28 +215,27 @@ html, body {
   transition: background 0.2s, transform 0.2s;
 }
 .btn-primary:hover { background: #e8e8e8; transform: translateY(-2px); }
-.btn-primary svg { transition: transform 0.2s; }
-.btn-primary:hover svg { transform: translateY(3px); }
 
 .btn-ghost {
-  font-size: 0.75rem;
-  font-weight: 300;
-  letter-spacing: 0.15em;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.4em;
   text-transform: uppercase;
   text-decoration: none;
   padding-bottom: 3px;
   border-bottom: 1px solid rgba(255,255,255,0.15);
-  transition: background-position 0.4s ease, border-color 0.3s;
   background: linear-gradient(to right, #ffffff 50%, rgba(255,255,255,0.3) 50%);
   background-size: 200% 100%;
   background-position: 100% 0;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  transition: background-position 0.8s ease, border-color 0.3s, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .btn-ghost:hover {
   background-position: 0% 0;
   border-color: rgba(255,255,255,0.4);
+  transform: translateX(30px);
 }
 
 /* Right — founder */
@@ -278,14 +243,15 @@ html, body {
   position: relative;
   display: flex;
   justify-content: center;
+  align-items: center;
   opacity: 0;
   transform: translateX(40px);
+  will-change: transform, opacity;
 }
-
 .founder-img-wrap {
   position: relative;
   width: 100%;
-  max-width: 440px;
+  max-width: 400px;
 }
 .founder-img {
   width: 100%;
@@ -296,11 +262,9 @@ html, body {
   display: block;
   filter: grayscale(10%);
 }
-
 .birthday-badge {
   position: absolute;
-  bottom: 28px;
-  left: -20px;
+  bottom: 28px; left: -20px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -324,7 +288,6 @@ html, body {
   letter-spacing: 0.1em;
   color: #ff5a1e;
 }
-
 .frame-line {
   position: absolute;
   width: 36px; height: 36px;
@@ -344,8 +307,7 @@ html, body {
 /* Scroll hint */
 .scroll-hint {
   position: absolute;
-  bottom: 36px;
-  left: 56px;
+  bottom: 36px; left: 56px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -375,56 +337,62 @@ html, body {
 
 /* ══════════════════════════════
    SECTION 2 — SCOOTERS
+   position: relative để scroll tự nhiên
 ══════════════════════════════ */
 .scooter-section {
-  position: fixed;
-  inset: 0;
+  position: relative;
   z-index: 2;
+  min-height: 100vh;
   width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  left: 50%;
-  transform: translateX(-50%) translateY(100%);
-  padding: 100px 56px 60px;
+  padding: 120px 56px 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 40px;
-  overflow-y: auto;
 }
 
 @media (max-width: 768px) {
   .scooter-section { padding: 80px 24px 60px; }
 }
 
+/* Section header clip reveal */
 .scooter-section-header { text-align: center; }
-.section-eyebrow {
-  font-size: 0.68rem;
-  font-weight: 400;
-  letter-spacing: 0.25em;
+.section-eyebrow-wrap,
+.section-title-wrap {
+  overflow: hidden;
+  display: block;
+}
+.section-eyebrow-line {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5em;
   text-transform: uppercase;
   color: #ff5a1e;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  display: block;
 }
-.section-title {
+.section-title-line {
   font-family: 'Bebas Neue', sans-serif;
   font-size: clamp(2.8rem, 6vw, 4.5rem);
   letter-spacing: 0.05em;
   line-height: 1;
   margin-bottom: 8px;
+  display: block;
 }
 .section-sub {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 300;
   color: rgba(255,255,255,0.25);
   letter-spacing: 0.1em;
+  display: block;
+  transform-origin: center center;
 }
 
 /* Main display image */
 .scooter-main-display {
   position: relative;
   width: 100%;
-  max-width: 760px;
+  max-width: 700px;
   aspect-ratio: 16/9;
   border-radius: 4px;
   overflow: hidden;
@@ -441,9 +409,9 @@ html, body {
 .scooter-main-img.visible { opacity: 1; }
 .scooter-version-overlay {
   position: absolute;
-  bottom: 16px; right: 20px;
+  bottom: 12px; right: 16px;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   letter-spacing: 0.15em;
   color: rgba(255,255,255,0.2);
   pointer-events: none;
@@ -453,26 +421,24 @@ html, body {
 .scooter-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  gap: 12px;
   width: 100%;
-  max-width: 760px;
+  max-width: 700px;
 }
 @media (max-width: 600px) {
   .scooter-cards { grid-template-columns: 1fr; }
 }
-
 .scooter-card {
-  opacity: 0;
-  transform: translateY(24px);
   background: rgba(255,255,255,0.025);
   border: 0.5px solid rgba(255,255,255,0.07);
   border-radius: 4px;
   overflow: hidden;
   cursor: pointer;
-  transition: border-color 0.25s, background 0.25s;
+  transition: border-color 0.25s, background 0.25s, transform 0.3s ease;
   display: flex;
   flex-direction: column;
 }
+.scooter-card:hover { transform: translateY(-4px); }
 .scooter-card.active {
   border-color: rgba(255, 90, 30, 0.45);
   background: rgba(255, 90, 30, 0.04);
@@ -493,27 +459,27 @@ html, body {
 }
 .scooter-card:hover .scooter-card-img { transform: scale(1.05); }
 .scooter-card-info {
-  padding: 10px 12px 4px;
+  padding: 8px 10px 4px;
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 6px;
 }
 .scooter-card-label {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   letter-spacing: 0.08em;
   color: #fff;
 }
 .scooter-card-version {
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   font-weight: 300;
   color: rgba(255,255,255,0.3);
   letter-spacing: 0.08em;
 }
 .scooter-card-link {
   display: block;
-  padding: 6px 12px 10px;
-  font-size: 0.65rem;
+  padding: 4px 10px 8px;
+  font-size: 0.62rem;
   font-weight: 400;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -524,10 +490,7 @@ html, body {
 .scooter-card-link:hover { color: #ff5a1e; }
 
 /* Dots */
-.scooter-dots {
-  display: flex;
-  gap: 8px;
-}
+.scooter-dots { display: flex; gap: 8px; }
 .dot {
   width: 5px; height: 5px;
   border-radius: 50%;
@@ -541,4 +504,19 @@ html, body {
   background: #ff5a1e;
   width: 20px;
   border-radius: 3px;
+}
+.section-title-line {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.8rem, 6vw, 4.5rem);
+  letter-spacing: 0.05em;
+  line-height: 1;
+  margin-bottom: 10px;
+  display: block;
+  perspective: 600px;
+}
+
+.section-title-chars {
+  display: inline-block;
+  transform-origin: top center;
+  will-change: transform, opacity;
 }

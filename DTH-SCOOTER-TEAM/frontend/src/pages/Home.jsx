@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { getScooters } from "../services/api.js";
 import { scooterImages } from "../constants/images.js";
 import "./Home.css";
 import { initLenis } from "../utils/lenis.js";
 
+gsap.registerPlugin(ScrollTrigger);
 
 const FOUNDER_IMG = "/images/founder.jpg";
 
@@ -15,12 +17,10 @@ const VERSIONS = [
   { key: "scooter3", label: "V3", version: "NVX 155 VVA V3" },
 ];
 
-const TOTAL_STEPS = 4; // 0=hero, 1=V1, 2=V2, 3=V3
-
 function Home() {
   const [scooters, setScooters] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [step, setStep] = useState(0);
+  const [activeIdx, setActiveIdx] = useState(0);
 
   const heroRef = useRef(null);
   const heroLeftRef = useRef(null);
@@ -28,7 +28,6 @@ function Home() {
   const scooterSectionRef = useRef(null);
   const headerRef = useRef(null);
   const blobsRef = useRef([]);
-  const isAnimating = useRef(false);
 
   useEffect(() => {
     getScooters().then((data) => {
@@ -37,66 +36,152 @@ function Home() {
     });
   }, []);
 
-  // Entrance animation
   useEffect(() => {
     if (loading) return;
 
+    // Init Lenis smooth scroll
+    const lenis = initLenis();
+
+    // Blobs
     gsap.to(blobsRef.current, {
       opacity: 1, duration: 2, stagger: 0.3, ease: "power2.out",
     });
+
+    // Header
     gsap.to(headerRef.current, {
       opacity: 1, y: 0, duration: 0.7, ease: "power3.out", delay: 0.1,
     });
+
+    // Hero left children
     const leftChildren = heroLeftRef.current?.querySelectorAll(".anim-child");
     gsap.to(leftChildren, {
       opacity: 1, y: 0, duration: 0.8, stagger: 0.13, ease: "power4.out", delay: 0.3,
     });
+
+    // Hero image
     gsap.to(heroImgRef.current, {
       opacity: 1, x: 0, duration: 1, ease: "power3.out", delay: 0.5,
     });
-  }, [loading]);
 
-  // Section transition khi step thay đổi
-  useEffect(() => {
-    if (loading) return;
-    const hero = heroRef.current;
-    const scooter = scooterSectionRef.current;
+    // ── Hero scrub ra khi scroll xuống, tự reverse khi scroll lên ──
+    gsap.fromTo(heroLeftRef.current,
+      { x: 0, opacity: 1 },
+      {
+        x: -80, opacity: 0, ease: "power2.in",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "50% top",
+          end: "bottom top",
+          scrub: 1.2,
+        },
+      }
+    );
+    gsap.fromTo(heroImgRef.current,
+      { x: 0, opacity: 1 },
+      {
+        x: 80, opacity: 0, ease: "power2.in",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "50% top",
+          end: "bottom top",
+          scrub: 1.5,
+        },
+      }
+    );
+    // Eyebrow text: vào từ trên → ra về trên
+    gsap.fromTo(".hero-eyebrow",
+      { y: 0, opacity: 1 },
+      {
+        y: -30, opacity: 0, ease: "none",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "40% top",
+          end: "bottom top",
+          scrub: 1,
+        },
+      }
+    );
+    // Title: vào từ dưới lên → ra về dưới
+    gsap.fromTo(".hero-title",
+      { y: 0, opacity: 1 },
+      {
+        y: 40, opacity: 0, ease: "none",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "45% top",
+          end: "bottom top",
+          scrub: 1.2,
+        },
+      }
+    );
+    // Desc + tags + actions: fade xuống
+    gsap.fromTo([".hero-desc", ".hero-tags", ".hero-actions"],
+      { y: 0, opacity: 1 },
+      {
+        y: 30, opacity: 0, ease: "none",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "55% top",
+          end: "bottom top",
+          scrub: 1,
+        },
+      }
+    );
+    // Scroll hint: fade out
+    gsap.fromTo(".scroll-hint",
+      { opacity: 1 },
+      {
+        opacity: 0, ease: "none",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "30% top",
+          end: "60% top",
+          scrub: 1,
+        },
+      }
+    );
 
-    if (step === 0) {
-      gsap.to(hero, { y: "0%", duration: 0.9, ease: "power3.inOut" });
-      gsap.to(scooter, { y: "100%", duration: 0.9, ease: "power3.inOut" });
-    } else {
-      gsap.to(hero, { y: "-100%", duration: 0.9, ease: "power3.inOut" });
-      gsap.to(scooter, { y: "0%", duration: 0.9, ease: "power3.inOut" });
-    }
+    // ── Section 2 — set initial state ──
+    gsap.set(".section-eyebrow-line", { yPercent: 110, opacity: 0 });
+    gsap.set(".section-title-chars", { yPercent: 100, opacity: 0, rotateX: -90 });
+    gsap.set(".section-sub", { opacity: 0, letterSpacing: "0.5em" });
+    gsap.set(".scooter-main-display", { opacity: 0, y: 30 });
+    gsap.set(".scooter-card", { opacity: 0, y: 40 });
 
-    const timer = setTimeout(() => {
-      isAnimating.current = false;
-    }, 950);
-    return () => clearTimeout(timer);
-  }, [step, loading]);
+    // ── Section 2 — 1 timeline duy nhất, không conflict ──
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: scooterSectionRef.current,
+        start: "top 70%",
+        end: "top 20%",
+        toggleActions: "play none none reverse",
+      },
+    })
+    .to(".section-eyebrow-line", {
+      yPercent: 0, opacity: 1,
+      duration: 0.65, ease: "power4.out",
+    })
+    .to(".section-title-chars", {
+      yPercent: 0, opacity: 1, rotateX: 0,
+      duration: 0.75, stagger: 0.04, ease: "power4.out",
+    }, "-=0.35")
+    .to(".section-sub", {
+      opacity: 1, letterSpacing: "0.1em",
+      duration: 0.9, ease: "power3.out",
+    }, "-=0.5")
+    .to(".scooter-main-display", {
+      opacity: 1, y: 0,
+      duration: 0.7, ease: "power3.out",
+    }, "-=0.5")
+    .to(".scooter-card", {
+      opacity: 1, y: 0,
+      duration: 0.55, stagger: 0.1, ease: "power3.out",
+    }, "-=0.4");
 
-  // Scroll hijack
-  useEffect(() => {
-    if (loading) return;
-    const onWheel = (e) => {
-      if (isAnimating.current) return;
-      const dir = e.deltaY > 0 ? 1 : -1;
-      setStep((prev) => {
-        const next = prev + dir;
-        if (next < 0 || next >= TOTAL_STEPS) return prev;
-        isAnimating.current = true;
-        return next;
-      });
+    return () => {
+      lenis.destroy();
+      ScrollTrigger.getAll().forEach((t) => t.kill());
     };
-    window.addEventListener("wheel", onWheel, { passive: true });
-    return () => window.removeEventListener("wheel", onWheel);
-  }, [loading]);
-  // Smooth scroll
-  useEffect(() => {
-    if (loading) return;
-    const lenis = initLenis();
-    return () => lenis.destroy();
   }, [loading]);
 
   if (loading) {
@@ -107,7 +192,6 @@ function Home() {
     );
   }
 
-  const activeIdx = step === 0 ? 0 : step - 1;
   const activeScooter = scooters[activeIdx] || scooters[0];
 
   return (
@@ -121,30 +205,9 @@ function Home() {
         <div className="ambient-blob blob-2" ref={(el) => (blobsRef.current[1] = el)} />
       </div>
 
-      {/* Progress dots */}
-      <div className="progress-dots">
-        {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-          <button
-            key={i}
-            className={`progress-dot${step === i ? " active" : ""}`}
-            onClick={() => {
-              if (!isAnimating.current) {
-                isAnimating.current = true;
-                setStep(i);
-              }
-            }}
-          />
-        ))}
-      </div>
-
       {/* Header */}
       <header className="home-header" ref={headerRef}>
-        <div className="home-header-logo">DTH Scooter Team</div>
-        <nav className="home-header-nav">
-          <div className="home-header-dot" />
-          <a href="#">Gallery</a>
-          <a href="#">Contact</a>
-        </nav>
+        <nav className="home-header-nav" />
       </header>
 
       {/* ══ SECTION 1 — HERO ══ */}
@@ -159,9 +222,9 @@ function Home() {
           </h1>
 
           <p className="anim-child hero-desc">
-            DTH Scooter Team là cộng đồng những anh em mê NVX độ tại HCMC.
-            Từ dàn áo, mâm, phuộc đến pô — mỗi chiếc xe là một câu chuyện riêng,
-            được tạo ra bằng đam mê thật sự trên đường phố Sài Gòn.
+            DTH Scooter Team is a community of NVX enthusiasts in Ho Chi Minh City.
+            From fairings, wheels, and suspension setups to exhaust systems — every scooter tells a different story,
+            built around refined aesthetics, quality craftsmanship, and a clean, compact design philosophy.
           </p>
 
           <div className="anim-child hero-tags">
@@ -171,20 +234,6 @@ function Home() {
           </div>
 
           <div className="anim-child hero-actions">
-            <button
-              className="btn-primary"
-              onClick={() => {
-                if (!isAnimating.current) {
-                  isAnimating.current = true;
-                  setStep(1);
-                }
-              }}
-            >
-              Xem xe
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M7 2v10M3 8l4 4 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
             <a
               href="https://www.facebook.com/nguyen.tien.hai.454888"
               target="_blank"
@@ -204,7 +253,7 @@ function Home() {
               <span className="birthday-icon">🎂</span>
               <div>
                 <div className="birthday-label">Birthday</div>
-                <div className="birthday-date">28 May</div>
+                <div className="birthday-date">28 May 1982</div>
               </div>
             </div>
             <div className="frame-line frame-tl" />
@@ -222,9 +271,22 @@ function Home() {
       {/* ══ SECTION 2 — SCOOTERS ══ */}
       <section className="scooter-section" ref={scooterSectionRef}>
         <div className="scooter-section-header">
-          <p className="section-eyebrow">The Builds</p>
-          <h2 className="section-title">NVX 155 VVA</h2>
-          <p className="section-sub">Scroll để xem từng phiên bản</p>
+          <div className="section-eyebrow-wrap">
+            <p className="section-eyebrow-line">The Builds</p>
+          </div>
+          <div className="section-title-wrap">
+            <h2 className="section-title-line">
+              {"NVX 155 VVA".split("").map((char, i) => (
+                <span
+                  key={i}
+                  className="section-title-chars"
+                  style={{ display: "inline-block", whiteSpace: char === " " ? "pre" : "normal" }}
+                >
+                  {char === " " ? "\u00A0" : char}
+                </span>
+              ))}
+            </h2>
+          </div>
         </div>
 
         {/* Main display */}
@@ -252,12 +314,7 @@ function Home() {
               <div
                 key={v.key}
                 className={`scooter-card${i === activeIdx ? " active" : ""}`}
-                onClick={() => {
-                  if (!isAnimating.current) {
-                    isAnimating.current = true;
-                    setStep(i + 1);
-                  }
-                }}
+                onClick={() => setActiveIdx(i)}
               >
                 <div className="scooter-card-img-wrap">
                   <img src={imgs?.thumbnail} alt={v.version} className="scooter-card-img" />
@@ -282,12 +339,7 @@ function Home() {
             <button
               key={i}
               className={`dot${i === activeIdx ? " active" : ""}`}
-              onClick={() => {
-                if (!isAnimating.current) {
-                  isAnimating.current = true;
-                  setStep(i + 1);
-                }
-              }}
+              onClick={() => setActiveIdx(i)}
             />
           ))}
         </div>
