@@ -39,150 +39,118 @@ function Home() {
   useEffect(() => {
     if (loading) return;
 
-    // Init Lenis smooth scroll
     const lenis = initLenis();
+    const ctx = gsap.context(() => {
 
-    // Blobs
-    gsap.to(blobsRef.current, {
-      opacity: 1, duration: 2, stagger: 0.3, ease: "power2.out",
+      // ── Entrance animations ──
+      gsap.to(blobsRef.current, {
+        opacity: 1, duration: 2, stagger: 0.3, ease: "power2.out",
+      });
+
+      gsap.to(headerRef.current, {
+        opacity: 1, y: 0, duration: 0.7, ease: "power3.out", delay: 0.1,
+      });
+
+      const leftChildren = heroLeftRef.current?.querySelectorAll(".anim-child");
+      gsap.to(leftChildren, {
+        opacity: 1, y: 0, duration: 0.8, stagger: 0.13, ease: "power4.out", delay: 0.3,
+      });
+
+      gsap.to(heroImgRef.current, {
+        opacity: 1, x: 0, duration: 1, ease: "power3.out", delay: 0.5,
+      });
+
+      // ── Hero scrub — chỉ kích hoạt khi scroll vào vùng trigger ──
+      ScrollTrigger.create({
+        trigger: heroRef.current,
+        start: "30% top",
+        end: "70% top",
+        scrub: 0.3,
+        onUpdate: (self) => {
+          const p = self.progress;
+
+          // Left: trượt sang trái + fade
+          gsap.set(heroLeftRef.current, {
+            x: -200 * p,
+            opacity: 1.5 - p * 2.75,
+          });
+
+          // Image: trượt sang phải + fade
+          gsap.set(heroImgRef.current, {
+            x: 200 * p,
+            opacity: 1.5 - p * 2.75,
+          });
+
+          // Eyebrow: lên trên + fade
+          gsap.set(".hero-eyebrow", {
+            y: -200 * p,
+            opacity: 1.5 - p * 2.75,
+          });
+
+          // Title: xuống dưới + fade
+          gsap.set(".hero-title", {
+            y: 200 * p,
+            opacity: 1.5 - p * 2.75,
+          });
+
+          // Desc + tags + actions: xuống + fade
+          gsap.set([".hero-desc", ".hero-tags", ".hero-actions"], {
+            y: 200 * p,
+            opacity: 1.5 - p * 2.75,
+          });
+
+          // Scroll hint: fade sớm hơn
+          gsap.set(".scroll-hint", {
+            opacity: Math.max(0, 1 - p * 3),
+          });
+        },
+      });
+
+      // ── Section 2 — set initial ──
+      gsap.set(".section-eyebrow-line", { yPercent: 110, opacity: 0 });
+      gsap.set(".section-title-chars", { yPercent: 100, opacity: 0, rotateX: -90 });
+      gsap.set(".section-sub", { opacity: 0, letterSpacing: "0.5em" });
+      gsap.set(".scooter-main-display", { opacity: 0, y: 30 });
+      gsap.set(".scooter-card", { opacity: 0, y: 40 });
+
+      // ── Section 2 — timeline ──
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: scooterSectionRef.current,
+          start: "top 30%",
+          end: "top 20%",
+          toggleActions: "play none none reverse",
+        },
+      })
+      .to(".section-eyebrow-line", {
+        yPercent: 0, opacity: 1,
+        duration: 0.65, ease: "power4.out",
+      })
+      .to(".section-title-chars", {
+        yPercent: 0, opacity: 1, rotateX: 0,
+        duration: 0.75, stagger: 0.04, ease: "power4.out",
+      }, "-=0.35")
+      .to(".section-sub", {
+        opacity: 1, letterSpacing: "0.1em",
+        duration: 0.9, ease: "power3.out",
+      }, "-=0.5")
+      .to(".scooter-main-display", {
+        opacity: 1, y: 0,
+        duration: 0.7, ease: "power3.out",
+      }, "-=0.5")
+      .to(".scooter-card", {
+        opacity: 1, y: 0,
+        duration: 0.55, stagger: 0.1, ease: "power3.out",
+      }, "-=0.4");
+
     });
-
-    // Header
-    gsap.to(headerRef.current, {
-      opacity: 1, y: 0, duration: 0.7, ease: "power3.out", delay: 0.1,
-    });
-
-    // Hero left children
-    const leftChildren = heroLeftRef.current?.querySelectorAll(".anim-child");
-    gsap.to(leftChildren, {
-      opacity: 1, y: 0, duration: 0.8, stagger: 0.13, ease: "power4.out", delay: 0.3,
-    });
-
-    // Hero image
-    gsap.to(heroImgRef.current, {
-      opacity: 1, x: 0, duration: 1, ease: "power3.out", delay: 0.5,
-    });
-
-    // ── Hero scrub ra khi scroll xuống, tự reverse khi scroll lên ──
-    gsap.fromTo(heroLeftRef.current,
-      { x: 0, opacity: 1 },
-      {
-        x: -80, opacity: 0, ease: "power2.in",
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "50% top",
-          end: "bottom top",
-          scrub: 1.2,
-        },
-      }
-    );
-    gsap.fromTo(heroImgRef.current,
-      { x: 0, opacity: 1 },
-      {
-        x: 80, opacity: 0, ease: "power2.in",
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "50% top",
-          end: "bottom top",
-          scrub: 1.5,
-        },
-      }
-    );
-    // Eyebrow text: vào từ trên → ra về trên
-    gsap.fromTo(".hero-eyebrow",
-      { y: 0, opacity: 1 },
-      {
-        y: -30, opacity: 0, ease: "none",
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "40% top",
-          end: "bottom top",
-          scrub: 1,
-        },
-      }
-    );
-    // Title: vào từ dưới lên → ra về dưới
-    gsap.fromTo(".hero-title",
-      { y: 0, opacity: 1 },
-      {
-        y: 40, opacity: 0, ease: "none",
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "45% top",
-          end: "bottom top",
-          scrub: 1.2,
-        },
-      }
-    );
-    // Desc + tags + actions: fade xuống
-    gsap.fromTo([".hero-desc", ".hero-tags", ".hero-actions"],
-      { y: 0, opacity: 1 },
-      {
-        y: 30, opacity: 0, ease: "none",
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "55% top",
-          end: "bottom top",
-          scrub: 1,
-        },
-      }
-    );
-    // Scroll hint: fade out
-    gsap.fromTo(".scroll-hint",
-      { opacity: 1 },
-      {
-        opacity: 0, ease: "none",
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "30% top",
-          end: "60% top",
-          scrub: 1,
-        },
-      }
-    );
-
-    // ── Section 2 — set initial state ──
-    gsap.set(".section-eyebrow-line", { yPercent: 110, opacity: 0 });
-    gsap.set(".section-title-chars", { yPercent: 100, opacity: 0, rotateX: -90 });
-    gsap.set(".section-sub", { opacity: 0, letterSpacing: "0.5em" });
-    gsap.set(".scooter-main-display", { opacity: 0, y: 30 });
-    gsap.set(".scooter-card", { opacity: 0, y: 40 });
-
-    // ── Section 2 — 1 timeline duy nhất, không conflict ──
-    gsap.timeline({
-      scrollTrigger: {
-        trigger: scooterSectionRef.current,
-        start: "top 70%",
-        end: "top 20%",
-        toggleActions: "play none none reverse",
-      },
-    })
-    .to(".section-eyebrow-line", {
-      yPercent: 0, opacity: 1,
-      duration: 0.65, ease: "power4.out",
-    })
-    .to(".section-title-chars", {
-      yPercent: 0, opacity: 1, rotateX: 0,
-      duration: 0.75, stagger: 0.04, ease: "power4.out",
-    }, "-=0.35")
-    .to(".section-sub", {
-      opacity: 1, letterSpacing: "0.1em",
-      duration: 0.9, ease: "power3.out",
-    }, "-=0.5")
-    .to(".scooter-main-display", {
-      opacity: 1, y: 0,
-      duration: 0.7, ease: "power3.out",
-    }, "-=0.5")
-    .to(".scooter-card", {
-      opacity: 1, y: 0,
-      duration: 0.55, stagger: 0.1, ease: "power3.out",
-    }, "-=0.4");
 
     return () => {
       lenis.destroy();
-      ScrollTrigger.getAll().forEach((t) => t.kill());
+      ctx.revert();
     };
   }, [loading]);
+
 
   if (loading) {
     return (
