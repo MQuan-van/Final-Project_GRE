@@ -154,3 +154,73 @@
   background: white;
   opacity: 0.7;
 }
+/* ── Welcome logo center ── */
+.welcome-main {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  overflow: hidden;
+}
+
+.welcome-shine {
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255,255,255,0.15) 50%,
+    transparent 70%
+  );
+  pointer-events: none;
+  opacity: 0;
+  z-index: 10;
+}
+
+.welcome-logo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.welcome-dth {
+  font-family: 'Arial Black', 'Arial', sans-serif;
+  font-size: clamp(80px, 18vw, 160px);
+  font-weight: 900;
+  font-style: italic;
+  color: #fff;
+  letter-spacing: -4px;
+  line-height: 1;
+  opacity: 0;
+  letter-spacing: 5px;
+}
+
+.welcome-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.welcome-bar-svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.welcome-scooter {
+  font-family: 'Arial Black', 'Arial', sans-serif;
+  font-size: clamp(18px, 3.5vw, 36px);
+  font-weight: 900;
+  font-style: italic;
+  color: #fff;
+  letter-spacing: 5px;
+  white-space: nowrap;
+  margin-left: 14px;
+  opacity: 0;
+}
