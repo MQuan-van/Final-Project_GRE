@@ -187,7 +187,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap:16px;
 }
 
 .welcome-dth {
@@ -203,14 +203,17 @@
 }
 
 .welcome-bar-row {
-  display: flex;
-  align-items: center;
-  gap: 0;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  display: block;
 }
 
 .welcome-bar-svg {
   display: block;
-  flex-shrink: 0;
+  width: 100%;
+  height: 32px;
+  overflow: visible;
 }
 
 .welcome-scooter {
@@ -223,4 +226,9 @@
   white-space: nowrap;
   margin-left: 14px;
   opacity: 0;
+}
+.welcome-text-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
 }
