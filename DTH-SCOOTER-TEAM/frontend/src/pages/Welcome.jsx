@@ -29,33 +29,42 @@ export default function Welcome() {
   const shineRef = useRef(null);
   const centerLine = useRef(null);
   const lineShine = useRef(null);
+  const trap1Ref = useRef(null);
+  const trap2Ref = useRef(null);
+  const trap3Ref = useRef(null);
+  const trap4Ref = useRef(null);
+  const trap5Ref = useRef(null);
+  const trapLineRef = useRef(null);
   const shineLoop = useRef(null);
   const reschedule = useRef(null);
 
-  function startShine() {
-    if (shineLoop.current) shineLoop.current.kill();
+  // function startShine() {
+  //   if (shineLoop.current) shineLoop.current.kill();
 
-    // Main screen shine
-    shineLoop.current = gsap.timeline({ repeat: -1, repeatDelay: 1.5 });
-    shineLoop.current
-      .set(shineRef.current, { left: '-40%', opacity: 1 })
-      .to(shineRef.current, { left: '140%', duration: 1.2, ease: 'power1.inOut' })
-      .set(shineRef.current, { left: '-40%' })
-      .to(shineRef.current, { left: '140%', duration: 1.2, ease: 'power1.inOut', delay: 0.1 });
-
-    // Line shine — đốm trắng chạy trên line đỏ, sync cùng timing
-    gsap.set(lineShine.current, { opacity: 1 });
-    gsap.fromTo(lineShine.current,
-      { attr: { x1: -100, x2:-20 } },
-      {
-        attr: { x1: 1400, x2: 1480 },
-        duration: 1.8,
-        ease: 'power1.inOut',
-        repeat: -1,
-        repeatDelay: 2,
-      }
-    );
-  }
+  //   shineLoop.current = gsap.timeline({ repeat: -1, repeatDelay: 1.5 });
+    
+  //   // Durations tăng dần cho 5 hình thang
+  //   const durations = [0.6, 0.75, 0.9, 1.05, 1.2];
+  //   const trapRefs = [trap1Ref, trap2Ref, trap3Ref, trap4Ref, trap5Ref];
+    
+  //   // Reset và vẽ từng hình thang
+  //   trapRefs.forEach((ref, idx) => {
+  //     gsap.set(ref.current, { attr: { 'stroke-dashoffset': ref.current.getAttribute('stroke-dasharray') } });
+  //     shineLoop.current.to(ref.current, {
+  //       attr: { 'stroke-dashoffset': 0 },
+  //       duration: durations[idx],
+  //       ease: 'power2.out',
+  //     }, idx * 0.1); // Offset mỗi hình 0.1s
+  //   });
+    
+  //   // Line chạy sau
+  //   gsap.set(trapLineRef.current, { attr: { 'stroke-dashoffset': trapLineRef.current.getAttribute('stroke-dasharray') } });
+  //   shineLoop.current.to(trapLineRef.current, {
+  //     attr: { 'stroke-dashoffset': 0 },
+  //     duration: 0.8,
+  //     ease: 'power2.out',
+  //   }, durations.length * 0.1);
+  // }
 
   function scheduleRescramble() {
     reschedule.current = setTimeout(() => {
@@ -64,36 +73,73 @@ export default function Welcome() {
       });
     }, 10000);
   }
-
   function playIntro() {
-    // Reset initial states
     gsap.set(dthRef.current, { opacity: 0 });
-    // gsap.set(scooterRef.current, { opacity: 0 });
     gsap.set(shineRef.current, { left: '-40%', opacity: 0 });
-    gsap.set(centerLine.current, {
-      attr: { 'stroke-dashoffset': '1400' }
-    });
-    // 1. DTH scramble
-    scramble(dthRef.current, 'DTH SCOOTER TEAM', 2000, () => {
-      setTimeout(() => {
-        // gsap.to(centerLine.current, {
-        //   attr: {
-        //     "stroke-dashoffset": 0
-        //   },
-        //   duration: 0.8,
-        //   ease: "power2.out"
-        // });
-        gsap.to(centerLine.current, {
-          attr: { 'stroke-dashoffset': 0 },
-          duration: 0.8,
-          ease: "power2.out"
+
+    // Reset tất cả hình thang VỀ TRẠNG THÁI ẨN ban đầu
+    const trapRefs = [trap1Ref, trap2Ref, trap3Ref, trap4Ref, trap5Ref];
+    trapRefs.forEach((ref) => {
+      if (ref.current) {
+        const dashArray = ref.current.getAttribute('stroke-dasharray');
+        gsap.set(ref.current, {
+          attr: { 'stroke-dashoffset': dashArray } // Ẩn hoàn toàn
         });
-      }, 380);
-      // 5. Shine loop
-        setTimeout(startShine, 300);
+      }
+    });
+    if (trapLineRef.current) {
+      const dashArray = trapLineRef.current.getAttribute('stroke-dasharray');
+      gsap.set(trapLineRef.current, {
+        attr: { 'stroke-dashoffset': dashArray }
+      });
+    }
+
+    // Text scramble trước
+    scramble(dthRef.current, 'DTH SCOOTER TEAM', 2000, () => {
+      // Chờ 1 giây rồi chạy hình thang
+      setTimeout(() => {
+        startShine();
         scheduleRescramble();
+      }, 1000);
     });
   }
+
+  function startShine() {
+    if (shineLoop.current) shineLoop.current.kill();
+    shineLoop.current = gsap.timeline({ repeat: -1, repeatDelay: 1.5 });
+
+    const durations = [0.6, 0.75, 0.9, 1.05, 1.2];
+    const trapRefs = [trap1Ref, trap2Ref, trap3Ref, trap4Ref, trap5Ref];
+
+    // trapRefs.forEach((ref, idx) => {
+    //   const dashArray = ref.current.getAttribute('stroke-dasharray');
+    //   shineLoop.current.to(ref.current, 
+    //     { attr: { 'stroke-dashoffset': dashArray } }, // FROM (ẩn)
+    //     {
+    //       attr: { 'stroke-dashoffset': 0 }, // TO (hiện)
+    //       duration: durations[idx],
+    //       ease: 'power2.out',
+    //     }, idx * 0.1);
+    // });
+    trapRefs.forEach((ref, idx) => {
+      shineLoop.current.to(ref.current, {
+        attr: { 'stroke-dashoffset': 0 },  // TO (hiện)
+        duration: durations[idx],
+        ease: 'power2.out',
+      }, idx * 0.1);
+    });
+    
+    // Line chạy sau
+    const lineDashArray = trapLineRef.current.getAttribute('stroke-dasharray');
+      shineLoop.current.to(trapLineRef.current,
+        { attr: { 'stroke-dashoffset': lineDashArray } },
+        {
+          attr: { 'stroke-dashoffset': 0 },
+          duration: 0.8,
+          ease: 'power2.out',
+        }, durations.length * 0.1);
+  } 
+
 
   useEffect(() => {
     playIntro();
@@ -107,14 +153,13 @@ export default function Welcome() {
     <main className="welcome-main">
       <div className="welcome-shine" ref={shineRef} />
 
-      {/* Logo center */}
-      <div className="welcome-logo"> {/* DTH */}
+      <div className="welcome-logo">
         <div className="welcome-text-wrap">
-          <div className="welcome-dth" ref={dthRef}>DTH SCOOTER TEAM</div>{/* Bar row */}
+          <div className="welcome-dth" ref={dthRef}>DTH SCOOTER TEAM</div>
           <div className="welcome-bar-row">
             <svg width="100%" 
-              height="32" 
-              viewBox="0 0 1400 32" 
+              height="90" 
+              viewBox="0 0 1400 90" 
               preserveAspectRatio="none" 
               className="welcome-bar-svg">
               <defs>
@@ -132,36 +177,75 @@ export default function Welcome() {
                 </filter>
               </defs>
 
-              <line
-                ref={centerLine}
-                x1="0"
-                y1="16"
-                x2="1400"
-                y2="16"
-                stroke="red"
+              {/* Hình thang 1 - nhỏ nhất */}
+              <polygon
+                ref={trap1Ref}
+                points="0,30 40,30 30,60 0,60"
+                stroke="url(#rg)"
                 strokeWidth="8"
+                fill="none"
                 strokeLinecap="round"
-                strokeDasharray="1400"
-                strokeDashoffset="1400"
+                strokeLinejoin="round"
+                strokeDasharray="120"
+                strokeDashoffset="120"
               />
-              <line
-                ref={lineShine}
-                x1="100"
-                y1="16"
-                x2="0"
-                y2="16"
-                stroke="#fff"
-                strokeWidth="10"
+              
+              {/* Hình thang 2 */}
+              <polygon
+                ref={trap2Ref}
+                points="60,20 120,20 100,70 60,70"
+                stroke="url(#rg)"
+                strokeWidth="8"
+                fill="none"
                 strokeLinecap="round"
-                opacity="0"
-                filter="url(#glow)"
+                strokeLinejoin="round"
+                strokeDasharray="150"
+                strokeDashoffset="150"
+              />
+              
+              {/* Hình thang 3 */}
+              <polygon
+                ref={trap3Ref}
+                points="150,10 220,10 190,80 150,80"
+                stroke="url(#rg)"
+                strokeWidth="8"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeDasharray="180"
+                strokeDashoffset="180"
+              />
+              
+              {/* Hình thang 4 */}
+              <polygon
+                ref={trap4Ref}
+                points="260,0 340,0 300,90 260,90"
+                stroke="url(#rg)"
+                strokeWidth="8"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeDasharray="210"
+                strokeDashoffset="210"
+              />
+              
+              {/* Hình thang 5 - lớn nhất */}
+              <polygon
+                ref={trap5Ref}
+                points="380,-10 470,-10 410,100 380,100"
+                stroke="url(#rg)"
+                strokeWidth="8"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeDasharray="240"
+                strokeDashoffset="240"
               />
             </svg>
           </div>
         </div>
       </div>
 
-      {/* Nav footer giữ nguyên */}
       <footer className="wel-nav">
         <div className="nav-left">
           <a href="https://github.com/MQuan-van/Final-Project_GRE.git"
