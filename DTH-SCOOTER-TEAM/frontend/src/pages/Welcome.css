@@ -249,11 +249,12 @@
   display: flex;
   gap: 50px;
 }
-
 .nav-right {
   justify-self: end;
   margin-right: 80px;
   font-size: 25px;
   font-weight: 600;
   letter-spacing: 2px;
+  display: flex;
+  gap: 36px;
 }

@@ -86,6 +86,7 @@ export default function Welcome() {
 
         </div>
         <div className="nav-right">
+          <div className="nav-item" data-label="STORY" onClick={() => navigate("/story")}>Story</div>
           <div className="nav-item" data-label="NEXT" onClick={() => navigate("/Home")}>Home</div>
         </div>
       </footer>

@@ -8,6 +8,7 @@ import {
 import Home from "./pages/Home";
 import Welcome from "./pages/Welcome";
 import Gallery from "./pages/Gallery";
+import Story from "./pages/Story";
 
 function App() {
   const location = useLocation();
@@ -22,6 +23,7 @@ function App() {
           <Route path="/" element={<Welcome />} />
           <Route path="/Home" element={<Home />} />
           <Route path="/gallery/:id" element={<Gallery />} />
+          <Route path="/story" element={<Story />} />
         </Routes>
       </AnimatePresence>
     </LayoutGroup>
@@ -29,22 +31,3 @@ function App() {
 }
 
 export default App;
-// import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-// import { AnimatePresence } from "framer-motion";
-// import Home from "./pages/Home";
-// import Gallery from "./pages/Gallery";
-
-// function AppRoutes() {
-//   const location = useLocation();
-
-//   return (
-//     <AnimatePresence mode="wait">
-//       <Routes location={location} key={location.pathname}>
-//         <Route path="/" element={<Home />} />
-//         <Route path="/gallery/:id" element={<Gallery />} />
-//       </Routes>
-//     </AnimatePresence>
-//   );
-// }
-
-// export default App; {

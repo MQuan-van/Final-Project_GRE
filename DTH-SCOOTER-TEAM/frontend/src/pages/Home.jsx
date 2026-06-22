@@ -175,7 +175,11 @@ function Home() {
 
       {/* Header */}
       <header className="home-header" ref={headerRef}>
-        <nav className="home-header-nav" />
+
+        <nav className="home-header-nav">
+          <Link to="/story">Story</Link>
+        </nav>      
+        
       </header>
 
       {/* ══ SECTION 1 — HERO ══ */}
