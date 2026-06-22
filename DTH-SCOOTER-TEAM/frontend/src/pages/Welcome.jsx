@@ -71,13 +71,19 @@ export default function Welcome() {
         <div className="nav-center">
           <a href="https://www.facebook.com/profile.php?id=61574902900658"
             target="_blank" rel="noopener noreferrer"
-            className="nav-item" data-label="DTH WORKSHOP">Facebook</a>
+            className="nav-item" data-label="DTH WORKSHOP">Facebook
+          </a>
+
           <a href="https://www.tiktok.com/@_dth568"
             target="_blank" rel="noopener noreferrer"
-            className="nav-item" data-label="DTH TIKTOK">Tiktok</a>
+            className="nav-item" data-label="DTH TIKTOK">Tiktok
+          </a>
+
           <a href="https://www.facebook.com/nguyen.tien.hai.454888"
             target="_blank" rel="noopener noreferrer"
-            className="nav-item" data-label="DTH'S OWNER">Contact</a>
+            className="nav-item" data-label="DTH'S OWNER">Contact
+          </a>
+
         </div>
         <div className="nav-right">
           <div className="nav-item" data-label="NEXT" onClick={() => navigate("/Home")}>Home</div>

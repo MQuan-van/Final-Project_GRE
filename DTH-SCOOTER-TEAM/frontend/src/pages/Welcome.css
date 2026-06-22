@@ -201,7 +201,7 @@
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 85%;
+  width: 95%;
   height: 3px;
   background: linear-gradient(90deg, #ff0000 0%, #ff6600 50%, #ff0000 100%);
   background-size: 150% 100%;
@@ -209,13 +209,6 @@
   box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
   clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
 }
-
-@keyframes waveSeparator {
-  0% { background-position: 200% 0; }
-  50% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
 /* =========================
    NAV ITEMS
 ========================= */
@@ -236,17 +229,6 @@
 .nav-item:hover {
   color: #ff0000;
 }
-
-.nav-item:hover::before {
-  opacity: 1;
-  bottom: 135%;
-}
-
-.nav-item:hover::after {
-  opacity: 1;
-  bottom: 125%;
-}
-
 /* =========================
    NAV SECTIONS
 ========================= */
