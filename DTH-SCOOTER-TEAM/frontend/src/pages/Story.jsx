@@ -168,8 +168,8 @@ export default function Story() {
         <p className="story-closing-desc">
           [Placeholder] Lời kết, lời mời cộng đồng tiếp tục theo dõi và đồng hành.
         </p>
-        <Link to="/Home" className="story-closing-link">
-          ← Back to Home
+         <Link to="/welcome" className="story-closing-link">
+          Vào Welcome →
         </Link>
       </section>
     </main>

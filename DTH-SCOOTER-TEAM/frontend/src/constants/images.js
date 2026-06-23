@@ -4,23 +4,23 @@
 export const scooterImages = {
   // Scooter 1
   scooter1: {
-    thumbnail: '/images/v1.png',
-    secondary1: '/images/v1_2.png',
-    secondary2: '/images/v1_3.png',
+    thumbnail: '/images/v1.jpeg',
+    secondary1: '/images/v1_2.jpeg',
+    secondary2: '/images/v1_3.jpeg',
   },
 
   // Scooter 2
   scooter2: {
-    thumbnail: '/images/v2.png',
-    secondary1: '/images/v2_2.png',
-    secondary2: '/images/v2_3.png',
+    thumbnail: '/images/v2.jpeg',
+    secondary1: '/images/v2_2.jpeg',
+    secondary2: '/images/v2_3.jpeg',
   },
 
   // Scooter 3
   scooter3: {
-    thumbnail: '/images/v3.png',
-    secondary1: '/images/v3_2.png',
-    secondary2: '/images/v3_3.png',
+    thumbnail: '/images/v3.jpeg',
+    secondary1: '/images/v3_2.jpeg',
+    secondary2: '/images/v3_3.jpeg',
   },
 
   // Thêm scooter khác tại đây

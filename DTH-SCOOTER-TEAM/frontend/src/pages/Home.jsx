@@ -177,7 +177,7 @@ function Home() {
       <header className="home-header" ref={headerRef}>
 
         <nav className="home-header-nav">
-          <Link to="/story">Story</Link>
+          <Link to="/">Story</Link>
         </nav>      
         
       </header>
@@ -296,7 +296,8 @@ function Home() {
                   <span className="scooter-card-version">{v.version}</span>
                 </div>
                 {sc && (
-                  <Link to={`/gallery/${sc._id}`} className="scooter-card-link">
+                  // <Link to={`/gallery/${sc._id}`} className="scooter-card-link">
+                  <Link to={`/gallery/${sc.slug}`} className="scooter-card-link">
                     Gallery →
                   </Link>
                 )}
