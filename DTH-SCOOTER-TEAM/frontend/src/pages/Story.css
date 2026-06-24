@@ -16,21 +16,66 @@
   text-transform: uppercase;
   color: #ff5a1e;
   margin-bottom: 16px;
+  transition: opacity 0.1s linear, transform 0.1s linear;
+  transform: translateY(-120px);
+
 }
 
 /* =========================
    SECTION 1 — INTRO
 ========================= */
 
-.story-intro {
-  min-height: 100vh;
+.story-intro-wrap {
+  position: relative;
+  height: 150vh;
+}
+
+.story-intro-pin {
+  position: relative;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: 0 24px;
+  overflow: hidden;
+  transition: opacity 0.15s linear;
+}
+
+/* .story-intro-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+} */
+ .story-intro-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.story-intro-text-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.story-intro-pin > *:not(.story-intro-particles):not(.story-intro-text-particles) {
   position: relative;
+  z-index: 2;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .story-intro-title {
@@ -39,10 +84,11 @@
   line-height: 1.05;
   letter-spacing: 0.02em;
   margin-bottom: 24px;
+  transition: opacity 0.1s linear, filter 0.1s linear;
 }
 
 .story-intro-desc {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 300;
   line-height: 1.85;
   color: rgba(255, 255, 255, 0.5);
