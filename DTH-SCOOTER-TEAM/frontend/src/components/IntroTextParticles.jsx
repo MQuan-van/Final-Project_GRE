@@ -86,8 +86,8 @@ function TitleParticles({ progressRef, circleTexture }) {
     () =>
       rasterizeRegion((ctx) => {
         ctx.font = `700 ${CANVAS_H * 0.1}px sans-serif`;
-        ctx.fillText("Mỗi chiếc xe", CANVAS_W / 2, CANVAS_H * 0.58);
-        ctx.fillText("là một câu chuyện.", CANVAS_W / 2, CANVAS_H * 0.7);
+        ctx.fillText("This web is inspired by Awward", CANVAS_W / 2, CANVAS_H * 0.58);
+        ctx.fillText("Keep learning.Keep growing.", CANVAS_W / 2, CANVAS_H * 0.7);
       }, 2),
     []
   );
@@ -123,7 +123,7 @@ export default function IntroTextParticles({ progressRef }) {
   return (
     <Canvas
       camera={{ position: [0, 0, 5], fov: 50 }}
-      style={{ width: "100%", height: "100%" }}
+      style={{ width: "100%", height: "100%", pointerEvents: "none" }}
     >
       <TitleParticles progressRef={progressRef} circleTexture={circleTexture} />
     </Canvas>

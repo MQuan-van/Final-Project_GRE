@@ -295,27 +295,7 @@ export default function Story() {
           }
 
           const MIN_OPACITY = 0.25;
-          // let titleOpacity, titleBlur, sectionOpacity;
-          // if (p <= 0.7) {
-          //   const t = p / 0.7;
-          //   titleOpacity = t;
-          //   titleBlur = (1 - t) * 10;
-          //   sectionOpacity = 1;
-          // } else if (p <= 0.9) {
-          //   titleOpacity = 1;
-          //   titleBlur = 0;
-          //   sectionOpacity = 1;
-          // } else {
-          //   titleOpacity = 1;
-          //   titleBlur = 0;
-          //   const fadeT = (p - 0.9) / 0.1;
-          //   sectionOpacity = 1 - fadeT * (1 - MIN_OPACITY);
-          // }
 
-          // if (introTitleRef.current) {
-          //   introTitleRef.current.style.opacity = titleOpacity;
-          //   introTitleRef.current.style.filter = `blur(${titleBlur}px)`;
-          // }
           let sectionOpacity;
           if (p <= 0.9) {
             sectionOpacity = 1;
@@ -384,8 +364,8 @@ export default function Story() {
 
           {/* "OUR STORY" — dòng riêng, ở TRÊN, không particle. Animation
               fade + slide nhẹ theo introProgressRef. */}
-          <p className="story-eyebrow story-intro-eyebrow" ref={introEyebrowRef} style={{ opacity: 0 }}>
-            Our Story
+          <p className="story-eyebrow story-intro-eyebrow" ref={introEyebrowRef} style={{ opacity: 0 }} >
+            Basiccally, I am a Web Developer
           </p>
 
           {/* Khung particle RIÊNG cho tiêu đề + mô tả — chiều cao CỐ ĐỊNH
@@ -397,9 +377,9 @@ export default function Story() {
 
           {/* Text gốc giữ sr-only cho accessibility/SEO — particle phía trên
               đã đảm nhận việc hiển thị thị giác. */}
-          <h1 className="story-intro-title sr-only" ref={introTitleRef}>
+          {/* <h1 className="story-intro-title sr-only" ref={introTitleRef}>
             Mỗi chiếc xe<br />là một câu chuyện.
-          </h1>
+          </h1> */}
         </div>
       </section>
 

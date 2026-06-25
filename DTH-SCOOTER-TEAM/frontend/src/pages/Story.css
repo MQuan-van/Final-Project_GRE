@@ -49,11 +49,11 @@
   z-index: 0;
   pointer-events: none;
 } */
- .story-intro-particles {
+.story-intro-particles {
   position: absolute;
   inset: 0;
   z-index: 0;
-  pointer-events: none;
+  cursor: grab;
 }
 .story-intro-text-particles {
   position: absolute;
@@ -318,4 +318,8 @@
 .story-closing-link:hover {
   border-color: #ff5a1e;
   color: #ff5a1e;
+}
+.story-intro-eyebrow {
+  transform: translateY(-120px);
+  font-size: 1.1rem;
 }

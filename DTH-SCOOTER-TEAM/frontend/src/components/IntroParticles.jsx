@@ -1,10 +1,11 @@
+
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import { createCircleTexture } from "../utils/particleTexture.js";
 
-const PARTICLE_COUNT = 400;
+const PARTICLE_COUNT = 800;
 
-function ParticleField({ progressRef }) {
+function ParticleField({ progressRef, dragRotationRef, velocityRef, isDragging }) {
   const pointsRef = useRef(null);
   const circleTexture = useMemo(() => createCircleTexture(), []);
 
@@ -71,6 +72,26 @@ function ParticleField({ progressRef }) {
 
     posAttr.array.set(displayPositions);
     posAttr.needsUpdate = true;
+
+    // INERTIA: nếu KHÔNG đang kéo, tiếp tục cộng vận tốc còn lại vào góc
+    // xoay (giống đang "trôi theo đà"), rồi giảm dần vận tốc đó mỗi frame
+    // bằng hệ số DAMPING (0.92 = mất ~8% tốc độ mỗi frame) cho tới khi gần
+    // 0 thì dừng hẳn.
+    if (!isDragging.current) {
+      const DAMPING = 0.99;
+      dragRotationRef.current.y += velocityRef.current.y;
+      dragRotationRef.current.x += velocityRef.current.x;
+      dragRotationRef.current.x = Math.max(-1, Math.min(1, dragRotationRef.current.x));
+
+      velocityRef.current.x *= DAMPING;
+      velocityRef.current.y *= DAMPING;
+
+      if (Math.abs(velocityRef.current.x) < 0.0001) velocityRef.current.x = 0;
+      if (Math.abs(velocityRef.current.y) < 0.0001) velocityRef.current.y = 0;
+    }
+
+    pointsRef.current.rotation.y = dragRotationRef.current.y;
+    pointsRef.current.rotation.x = dragRotationRef.current.x;
   });
 
   return (
@@ -83,7 +104,7 @@ function ParticleField({ progressRef }) {
           itemSize={3}
         />
       </bufferGeometry>
-            <pointsMaterial
+      <pointsMaterial
         size={0.045}
         color="#ef233c"
         map={circleTexture}
@@ -98,12 +119,57 @@ function ParticleField({ progressRef }) {
 }
 
 export default function IntroParticles({ progressRef }) {
+  const dragRotationRef = useRef({ x: 0, y: 0 });
+  const isDragging = useRef(false);
+  const lastPointer = useRef({ x: 0, y: 0 });
+  const velocityRef = useRef({ x: 0, y: 0 });
+
+  const handlePointerDown = (e) => {
+    if (e.button !== 0) return;
+    isDragging.current = true;
+    lastPointer.current = { x: e.clientX, y: e.clientY };
+    velocityRef.current = { x: 0, y: 0 };
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isDragging.current) return;
+    const dx = e.clientX - lastPointer.current.x;
+    const dy = e.clientY - lastPointer.current.y;
+    const deltaY = dx * 0.005;
+    const deltaX = dy * 0.005;
+
+    dragRotationRef.current.y += deltaY;
+    dragRotationRef.current.x += deltaX;
+    dragRotationRef.current.x = Math.max(-1, Math.min(1, dragRotationRef.current.x));
+
+    velocityRef.current = { x: deltaX, y: deltaY };
+
+    lastPointer.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handlePointerUp = () => {
+    isDragging.current = false;
+  };
+
   return (
-    <Canvas
-      camera={{ position: [0, 0, 5], fov: 50 }}
-      style={{ width: "100%", height: "100%" }}
+    <div
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
+      style={{ width: "100%", height: "100%", cursor: "grab" }}
     >
-      <ParticleField progressRef={progressRef} />
-    </Canvas>
+      <Canvas
+        camera={{ position: [0, 0, 5], fov: 50 }}
+        style={{ width: "100%", height: "100%" }}
+      >
+        <ParticleField
+          progressRef={progressRef}
+          dragRotationRef={dragRotationRef}
+          velocityRef={velocityRef}
+          isDragging={isDragging}
+        />
+      </Canvas>
+    </div>
   );
 }
